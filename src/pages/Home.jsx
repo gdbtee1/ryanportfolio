@@ -9,24 +9,29 @@ import {
 import PixelAvatar from "../components/PixelAvatar";
 import RetroButton from "../components/RetroButton";
 
-const outfits = ["classic", "explorer", "racer", "wizard"];
+const characterOptions = [
+  { character: "mario", outfit: "plumber" },
+  { character: "mario", outfit: "electrician" },
+  { character: "luigi", outfit: "plumber" },
+  { character: "luigi", outfit: "electrician" },
+];
 
 export default function Home() {
   const navigate = useNavigate();
-  const [outfitIndex, setOutfitIndex] = useState(0);
+  const [characterOptionIndex, setCharacterOptionIndex] = useState(0);
   const [started, setStarted] = useState(false);
 
-  const selectedOutfit = outfits[outfitIndex];
+  const selectedOption = characterOptions[characterOptionIndex];
 
-  const changeOutfit = (direction) => {
-    setOutfitIndex((currentIndex) => {
+  const changeCharacterOption = (direction) => {
+    setCharacterOptionIndex((currentIndex) => {
       const nextIndex = currentIndex + direction;
 
       if (nextIndex < 0) {
-        return outfits.length - 1;
+        return characterOptions.length - 1;
       }
 
-      if (nextIndex >= outfits.length) {
+      if (nextIndex >= characterOptions.length) {
         return 0;
       }
 
@@ -53,11 +58,11 @@ const startExperience = () => {
       }
 
       if (event.key === "ArrowLeft") {
-        changeOutfit(-1);
+        changeCharacterOption(-1);
       }
 
       if (event.key === "ArrowRight") {
-        changeOutfit(1);
+        changeCharacterOption(1);
       }
     };
 
@@ -156,24 +161,24 @@ const startExperience = () => {
         >
           <div className="avatar-stage-header">
             <span>SELECT CHARACTER</span>
-            <span>01 / 04</span>
+            <span>{String(characterOptionIndex + 1).padStart(2, "0")} / 04</span>
           </div>
 
           <div className="avatar-selector">
             <button
               className="avatar-arrow"
-              onClick={() => changeOutfit(-1)}
-              aria-label="Previous outfit"
+              onClick={() => changeCharacterOption(-1)}
+              aria-label="Previous character style"
             >
               <ChevronLeft />
             </button>
 
-            <PixelAvatar outfit={selectedOutfit} />
+            <PixelAvatar character={selectedOption.character} outfit={selectedOption.outfit} />
 
             <button
               className="avatar-arrow"
-              onClick={() => changeOutfit(1)}
-              aria-label="Next outfit"
+              onClick={() => changeCharacterOption(1)}
+              aria-label="Next character style"
             >
               <ChevronRight />
             </button>

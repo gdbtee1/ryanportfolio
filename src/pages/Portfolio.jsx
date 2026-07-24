@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Home } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 
 import LoadingScreen from "../components/LoadingScreen";
+import ProjectCartridge from "../components/ProjectCartridge";
 import { getProjectsByCategory } from "../data/projects";
 
 const categoryContent = {
@@ -13,6 +13,7 @@ const categoryContent = {
     description:
       "Professional campaign work, strategy, writing, messaging, and creative direction.",
   },
+
   student: {
     eyebrow: "WORLD 02",
     title: "STUDENT WORK",
@@ -47,6 +48,7 @@ export default function Portfolio() {
     return (
       <section className="error-page">
         <h1>WORLD NOT FOUND</h1>
+
         <button onClick={() => navigate("/game-room")}>
           RETURN TO GAME ROOM
         </button>
@@ -97,66 +99,11 @@ export default function Portfolio() {
 
       <div className="project-cartridge-grid">
         {projects.map((project, index) => (
-          <motion.button
+          <ProjectCartridge
             key={project.id}
-            className={`project-cartridge project-accent-${project.accent}`}
-            onClick={() => navigate(`/project/${project.id}`)}
-            initial={{
-              opacity: 0,
-              y: 45,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              delay: index * 0.12,
-            }}
-            whileHover={{
-              y: -12,
-              rotate: index % 2 === 0 ? -1 : 1,
-            }}
-            whileTap={{
-              scale: 0.97,
-            }}
-          >
-            <div className="project-cartridge-ridges">
-              {Array.from({ length: 9 }).map((_, ridgeIndex) => (
-                <span key={ridgeIndex} />
-              ))}
-            </div>
-
-            <div className="project-cartridge-label">
-              <div className="project-file-number">
-                FILE {String(index + 1).padStart(2, "0")}
-              </div>
-
-              <div className="project-pixel-icon">
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-              </div>
-
-              <h2>{project.title}</h2>
-              <p>{project.client}</p>
-
-              <div className="project-label-meta">
-                <span>{project.year}</span>
-                <span>{project.role}</span>
-              </div>
-            </div>
-
-            <div className="project-cartridge-footer">
-              <span>OPEN CAMPAIGN</span>
-              <ArrowRight />
-            </div>
-          </motion.button>
+            project={project}
+            index={index}
+          />
         ))}
       </div>
 
