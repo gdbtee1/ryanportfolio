@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 
+import { getProjectById, projects } from "../data/projects";
 import { supabase } from "../lib/supabase";
 import LoadingScreen from "../components/LoadingScreen";
 
@@ -389,6 +390,8 @@ export default function ProjectDetail() {
       setLoading(true);
       setLoadError("");
 
+      const localProject = getProjectById(projectId);
+
       const { data, error } = await supabase
         .from("projects")
         .select("*")
@@ -397,7 +400,7 @@ export default function ProjectDetail() {
 
       if (!active) return;
 
-      if (error) {
+      if (error && !localProject) {
         console.error("Unable to load project:", error);
         setProject(null);
         setCategoryProjects([]);
@@ -406,7 +409,29 @@ export default function ProjectDetail() {
         return;
       }
 
-      if (!data) {
+      const sourceProject = data
+        ? {
+            ...(localProject ?? {}),
+            ...data,
+            iconType:
+              localProject?.iconType ??
+              data.icon_type ??
+              data.iconType ??
+              "",
+            externalUrl:
+              data.external_url ??
+              localProject?.externalUrl ??
+              data.externalUrl ??
+              "",
+            coverImageUrl:
+              data.cover_image_url ??
+              localProject?.coverImageUrl ??
+              data.coverImageUrl ??
+              "",
+          }
+        : localProject;
+
+      if (!sourceProject) {
         setProject(null);
         setCategoryProjects([]);
         setLoading(false);
@@ -414,20 +439,21 @@ export default function ProjectDetail() {
       }
 
       const normalizedProject = {
-        ...data,
-        iconType: data.icon_type ?? "",
-        externalUrl: data.external_url ?? "",
-        coverImageUrl: data.cover_image_url ?? "",
-        services: Array.isArray(data.services) ? data.services : [],
-        attachments: Array.isArray(data.attachments) ? data.attachments : [],
-        gallery: Array.isArray(data.gallery)
-          ? data.gallery
+        ...sourceProject,
+        services: Array.isArray(sourceProject.services)
+          ? sourceProject.services
+          : [],
+        attachments: Array.isArray(sourceProject.attachments)
+          ? sourceProject.attachments
+          : [],
+        gallery: Array.isArray(sourceProject.gallery)
+          ? sourceProject.gallery
               .filter(Boolean)
               .map((item) =>
                 typeof item === "string"
                   ? {
                       src: item,
-                      alt: `${data.title || "Project"} campaign asset`,
+                      alt: `${sourceProject.title || "Project"} campaign asset`,
                       caption: "",
                     }
                   : item,
@@ -436,6 +462,10 @@ export default function ProjectDetail() {
       };
 
       setProject(normalizedProject);
+
+      const localCategoryProjects = projects.filter(
+        (item) => item.category === normalizedProject.category,
+      );
 
       const { data: relatedProjects, error: relatedError } = await supabase
         .from("projects")
@@ -448,15 +478,71 @@ export default function ProjectDetail() {
 
       if (relatedError) {
         console.error("Unable to load related projects:", relatedError);
-        setCategoryProjects([normalizedProject]);
+        setCategoryProjects(localCategoryProjects);
       } else {
+        const relatedProjectMap = new Map(
+          (relatedProjects ?? []).map((item) => [item.id, item]),
+        );
+
+        const mergedLocalProjects = localCategoryProjects.map(
+          (localItem, index) => {
+            const cmsItem = relatedProjectMap.get(localItem.id);
+
+            if (!cmsItem) {
+              return {
+                ...localItem,
+                display_order: localItem.display_order ?? index,
+              };
+            }
+
+            relatedProjectMap.delete(localItem.id);
+
+            return {
+              ...localItem,
+              ...cmsItem,
+              iconType:
+                localItem.iconType ??
+                cmsItem.icon_type ??
+                cmsItem.iconType ??
+                "",
+              externalUrl:
+                cmsItem.external_url ??
+                localItem.externalUrl ??
+                cmsItem.externalUrl ??
+                "",
+              coverImageUrl:
+                cmsItem.cover_image_url ??
+                localItem.coverImageUrl ??
+                cmsItem.coverImageUrl ??
+                "",
+              display_order:
+                cmsItem.display_order ??
+                localItem.display_order ??
+                index,
+            };
+          },
+        );
+
+        const cmsOnlyProjects = Array.from(
+          relatedProjectMap.values(),
+        ).map((item, index) => ({
+          ...item,
+          iconType: item.icon_type ?? item.iconType ?? "",
+          externalUrl:
+            item.external_url ?? item.externalUrl ?? "",
+          coverImageUrl:
+            item.cover_image_url ?? item.coverImageUrl ?? "",
+          display_order:
+            item.display_order ??
+            mergedLocalProjects.length + index,
+        }));
+
         setCategoryProjects(
-          (relatedProjects ?? []).map((item) => ({
-            ...item,
-            iconType: item.icon_type ?? "",
-            externalUrl: item.external_url ?? "",
-            coverImageUrl: item.cover_image_url ?? "",
-          })),
+          [...mergedLocalProjects, ...cmsOnlyProjects].sort(
+            (a, b) =>
+              Number(a.display_order ?? 0) -
+              Number(b.display_order ?? 0),
+          ),
         );
       }
 
