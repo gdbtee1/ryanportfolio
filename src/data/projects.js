@@ -1,4 +1,5 @@
 export const projects = [
+
   {
     id: "dairy-queen",
     category: "agency",
@@ -114,7 +115,106 @@ export const projects = [
     accent: "green",
     gallery: [],
   },
+  {
+  id: "barnes-and-noble",
+  category: "agency",
+  title: "Barnes & Noble",
+  client: "Barnes & Noble",
 
+  iconType: "book",
+  externalUrl: "",
+
+  year: "2025",
+  role: "Campaign Concept + Video",
+
+  description:
+    "A campaign project developed for Barnes & Noble featuring video-led creative work and brand storytelling.",
+
+  challenge:
+    "Create an engaging campaign concept that reflects the Barnes & Noble brand while keeping the creative approachable and visually memorable.",
+
+  solution:
+    "Developed a video-based campaign direction focused on storytelling, culture, and the experience of discovering books.",
+
+  result:
+    "A polished campaign asset that presents the brand through a clear creative concept and accessible visual narrative.",
+
+  services: [
+    "Campaign Concept",
+    "Creative Strategy",
+    "Video Creative",
+    "Brand Storytelling",
+  ],
+
+  accent: "blue",
+  gallery: [],
+
+  attachments: [
+    {
+      title: "Barnes & Noble Campaign",
+      type: "youtube",
+      url: "https://youtu.be/cJ3PRKLDdhU",
+    },
+  ],
+},
+{
+ 
+  id: "pizza-rolls",
+  category: "student",
+  title: "Pizza Rolls",
+  client: "Pizza Rolls",
+
+  iconType: "pizza-rolls",
+  externalUrl: "",
+
+  year: "2025",
+  role: "Campaign Design + Motion",
+
+  description:
+    "A social-first campaign featuring four Pinterest video advertisements created for Pizza Rolls.",
+
+  challenge:
+    "Develop an engaging social campaign that immediately captures attention and showcases the brand through short-form creative.",
+
+  solution:
+    "Designed four campaign videos with a consistent creative direction, playful messaging, and a retro-inspired visual approach.",
+
+  result:
+    "A complete campaign system demonstrating creative strategy, motion design, and social advertising concepts.",
+
+  services: [
+    "Creative Direction",
+    "Campaign Strategy",
+    "Motion Design",
+    "Advertising",
+  ],
+
+  accent: "orange",
+  gallery: [],
+
+  attachments: [
+    {
+      title: "Pinterest Campaign 1",
+      type: "youtube",
+      url: "https://youtu.be/aqRI_I1f9uA",
+    },
+    {
+      title: "Pinterest Campaign 2",
+      type: "youtube",
+      url: "https://youtu.be/PpUMoCS4D3I",
+    },
+    {
+      title: "Pinterest Campaign 3",
+      type: "youtube",
+      url: "https://youtu.be/6Qc572D7leA",
+    },
+    {
+      title: "Pinterest Campaign 4",
+      type: "youtube",
+      url: "https://youtu.be/1aSTEH-9MTw",
+    },
+  ],
+},
   {
     id: "chickenfish",
     category: "student",

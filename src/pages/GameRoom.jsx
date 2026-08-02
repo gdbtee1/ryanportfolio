@@ -1,5 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { BriefcaseBusiness, GraduationCap, Sparkles } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  GraduationCap,
+  Sparkles,
+  Terminal,
+} from "lucide-react";
+
 import { playRetroSound } from "../hooks/useRetroSound";
 import RetroTV from "../components/RetroTV";
 import GameCartridge from "../components/GameCartridge";
@@ -23,10 +29,25 @@ const worlds = [
     icon: <Sparkles />,
     destination: "/credits",
   },
+  {
+    title: "ADMIN TERMINAL",
+    subtitle: "Secure CMS access",
+    icon: <Terminal />,
+    destination: "/admin",
+    isAdmin: true,
+  },
 ];
 
 export default function GameRoom() {
   const navigate = useNavigate();
+
+  function openWorld(world) {
+    playRetroSound(world.isAdmin ? "start" : "load");
+
+    window.setTimeout(() => {
+      navigate(world.destination);
+    }, world.isAdmin ? 360 : 220);
+  }
 
   return (
     <section className="game-room-page">
@@ -37,6 +58,7 @@ export default function GameRoom() {
         </div>
 
         <button
+          type="button"
           className="text-link-button"
           onClick={() => navigate("/contact")}
         >
@@ -50,32 +72,35 @@ export default function GameRoom() {
 
           <div className="tv-console-message">
             <span className="status-light" />
-            SYSTEM READY — SELECT ONE OF THREE WORLDS
+            SYSTEM READY — SELECT ONE OF {worlds.length} WORLDS
           </div>
         </div>
 
         <div className="world-selection">
           <div className="world-selection-heading">
             <span>AVAILABLE GAMES</span>
-            <span>3 FILES FOUND</span>
+            <span>{worlds.length} FILES FOUND</span>
           </div>
 
           <div className="cartridge-grid">
             {worlds.map((world, index) => (
-              <GameCartridge
+              <div
+                className={
+                  world.isAdmin
+                    ? "admin-terminal-cartridge"
+                    : ""
+                }
                 key={world.title}
-                title={world.title}
-                subtitle={world.subtitle}
-                icon={world.icon}
-                index={index}
-               onClick={() => {
-  playRetroSound("load");
+              >
+                <GameCartridge
+                  title={world.title}
+                  subtitle={world.subtitle}
+                  icon={world.icon}
+                  index={index}
+                  onClick={() => openWorld(world)}
+                />
 
-  window.setTimeout(() => {
-    navigate(world.destination);
-  }, 220);
-}}
-              />
+              </div>
             ))}
           </div>
 
@@ -84,7 +109,15 @@ export default function GameRoom() {
               <strong>HOW TO PLAY:</strong> Select a cartridge to load a
               portfolio world.
             </p>
-            <p>Discover campaigns, strategy, writing and creative direction.</p>
+
+            <p>
+              Discover campaigns, strategy, writing and creative direction.
+            </p>
+
+            <p>
+              <strong>CMS ACCESS:</strong> Use the Admin Terminal to sign in and
+              manage projects.
+            </p>
           </div>
         </div>
       </div>

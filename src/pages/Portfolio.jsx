@@ -5,6 +5,7 @@ import { ArrowLeft, Home } from "lucide-react";
 import LoadingScreen from "../components/LoadingScreen";
 import ProjectCartridge from "../components/ProjectCartridge";
 import { getProjectsByCategory } from "../data/projects";
+import { supabase } from "../lib/supabase";
 
 const categoryContent = {
   agency: {
@@ -26,22 +27,116 @@ export default function Portfolio() {
   const { category } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [cmsProjects, setCmsProjects] = useState([]);
 
   const content = categoryContent[category];
 
-  const projects = useMemo(
+  const originalProjects = useMemo(
     () => getProjectsByCategory(category),
     [category],
   );
 
+  const projects = useMemo(() => {
+    const cmsProjectMap = new Map(
+      cmsProjects.map((project) => [project.id, project]),
+    );
+
+    const mergedOriginalProjects = originalProjects.map(
+      (project, index) => {
+        const cmsProject = cmsProjectMap.get(project.id);
+
+        if (!cmsProject) {
+          return {
+            ...project,
+            display_order: project.display_order ?? index,
+          };
+        }
+
+        cmsProjectMap.delete(project.id);
+
+        return {
+          ...project,
+          ...cmsProject,
+          iconType:
+            project.iconType ??
+            cmsProject.icon_type ??
+            cmsProject.iconType ??
+            "",
+          externalUrl:
+            cmsProject.external_url ??
+            project.externalUrl ??
+            "",
+          coverImageUrl:
+            cmsProject.cover_image_url ??
+            project.coverImageUrl ??
+            "",
+          display_order:
+            cmsProject.display_order ??
+            project.display_order ??
+            index,
+        };
+      },
+    );
+
+    const newCmsProjects = Array.from(
+      cmsProjectMap.values(),
+    ).map((project, index) => ({
+      ...project,
+      iconType: project.icon_type ?? project.iconType ?? "",
+      externalUrl:
+        project.external_url ?? project.externalUrl ?? "",
+      coverImageUrl:
+        project.cover_image_url ??
+        project.coverImageUrl ??
+        "",
+      display_order:
+        project.display_order ??
+        mergedOriginalProjects.length + index,
+    }));
+
+    return [...mergedOriginalProjects, ...newCmsProjects].sort(
+      (a, b) =>
+        Number(a.display_order ?? 0) -
+        Number(b.display_order ?? 0),
+    );
+  }, [originalProjects, cmsProjects]);
+
   useEffect(() => {
-    setLoading(true);
+    let active = true;
 
-    const timeout = window.setTimeout(() => {
-      setLoading(false);
-    }, 950);
+    async function loadProjects() {
+      setLoading(true);
 
-    return () => window.clearTimeout(timeout);
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("published", true)
+        .eq("category", category)
+        .order("display_order", { ascending: true });
+
+      if (!active) return;
+
+      if (error) {
+        console.error("Unable to load CMS projects:", error);
+        setCmsProjects([]);
+      } else {
+        setCmsProjects(data ?? []);
+      }
+
+      const timeout = window.setTimeout(() => {
+        if (active) {
+          setLoading(false);
+        }
+      }, 950);
+
+      return () => window.clearTimeout(timeout);
+    }
+
+    loadProjects();
+
+    return () => {
+      active = false;
+    };
   }, [category]);
 
   if (!content) {
