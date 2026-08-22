@@ -19,6 +19,8 @@ const DEFAULT_ABOUT_CONTENT = {
   paragraph1: "My work sits between strategy, writing, creative direction, storytelling, and culture. I enjoy taking an early idea and building the language, concept, and structure that gives it momentum.",
   paragraph2: "This portfolio was designed as an interactive game because I believe creative work should feel like an experience, not just a collection of slides.",
   skills: ["Campaign Strategy", "Copywriting", "Brand Voice", "Creative Direction", "Storytelling", "Concept Development"],
+  headshotUrl: "",
+  headshotAlt: "Ryne Mitra professional headshot",
 };
 
 export default function Credits() {
@@ -95,7 +97,83 @@ export default function Credits() {
             <span>{content.classLabel}</span>
           </div>
 
-          <PixelAvatar outfit="classic" />
+          <div
+            className="credits-headshot-frame"
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: "360px",
+              aspectRatio: "4 / 5",
+              margin: "24px auto 26px",
+              overflow: "hidden",
+              border: "5px solid #100a12",
+              background:
+                "linear-gradient(135deg, rgba(255,192,158,.12), rgba(101,214,154,.08)), #24132b",
+              boxShadow: "10px 10px 0 #58192b",
+            }}
+          >
+            {content.headshotUrl ? (
+              <img
+                src={content.headshotUrl}
+                alt={content.headshotAlt || `${content.name} professional headshot`}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "block",
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "grid",
+                  placeItems: "center",
+                  padding: "28px",
+                  textAlign: "center",
+                }}
+              >
+                <div>
+                  <div style={{ transform: "scale(.78)", transformOrigin: "center" }}>
+                    <PixelAvatar outfit="classic" />
+                  </div>
+
+                  <p
+                    style={{
+                      margin: "-36px 0 0",
+                      fontFamily: '"Press Start 2P", monospace',
+                      fontSize: "8px",
+                      lineHeight: 1.8,
+                      color: "#ffc09e",
+                    }}
+                  >
+                    PROFESSIONAL HEADSHOT
+                    <br />
+                    COMING SOON
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <span
+              style={{
+                position: "absolute",
+                top: "12px",
+                left: "12px",
+                padding: "8px 10px",
+                border: "3px solid #100a12",
+                fontFamily: '"Press Start 2P", monospace',
+                fontSize: "7px",
+                color: "#120b18",
+                background: "#ffd166",
+                boxShadow: "4px 4px 0 #8f2436",
+              }}
+            >
+              PLAYER PORTRAIT
+            </span>
+          </div>
 
           <div className="player-stat-panel">
             <div>
