@@ -1,11 +1,58 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Mail, Sparkles } from "lucide-react";
 
 import PixelAvatar from "../components/PixelAvatar";
+import { supabase } from "../lib/supabase";
+
+const DEFAULT_ABOUT_CONTENT = {
+  worldLabel: "WORLD 03",
+  pageTitle: "CREDITS",
+  playerLabel: "PLAYER 01",
+  classLabel: "CREATIVE CLASS",
+  name: "Ryne Mitra",
+  role: "Campaign Creative",
+  specialty: "Words + Worlds",
+  eyebrow: "ABOUT THE PLAYER",
+  headline: "I build campaign ideas that give brands a clearer voice and a world people can remember.",
+  paragraph1: "My work sits between strategy, writing, creative direction, storytelling, and culture. I enjoy taking an early idea and building the language, concept, and structure that gives it momentum.",
+  paragraph2: "This portfolio was designed as an interactive game because I believe creative work should feel like an experience, not just a collection of slides.",
+  skills: ["Campaign Strategy", "Copywriting", "Brand Voice", "Creative Direction", "Storytelling", "Concept Development"],
+};
 
 export default function Credits() {
   const navigate = useNavigate();
+  const [content, setContent] = useState(DEFAULT_ABOUT_CONTENT);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadAboutContent() {
+      const { data, error } = await supabase
+        .from("page_content")
+        .select("content")
+        .eq("id", "about")
+        .maybeSingle();
+
+      if (!active) return;
+
+      if (error) {
+        console.error("Unable to load about CMS content:", error);
+        return;
+      }
+
+      if (data?.content) {
+        setContent((current) => ({ ...current, ...data.content }));
+      }
+    }
+
+    loadAboutContent();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <section className="credits-page">
@@ -19,8 +66,8 @@ export default function Credits() {
         </button>
 
         <div>
-          <p>WORLD 03</p>
-          <h1>CREDITS</h1>
+          <p>{content.worldLabel}</p>
+          <h1>{content.pageTitle}</h1>
         </div>
 
         <button
@@ -44,8 +91,8 @@ export default function Credits() {
           }}
         >
           <div className="credits-player-label">
-            <span>PLAYER 01</span>
-            <span>CREATIVE CLASS</span>
+            <span>{content.playerLabel}</span>
+            <span>{content.classLabel}</span>
           </div>
 
           <PixelAvatar outfit="classic" />
@@ -53,17 +100,17 @@ export default function Credits() {
           <div className="player-stat-panel">
             <div>
               <span>NAME</span>
-              <strong>Ryne Mitra</strong>
+              <strong>{content.name}</strong>
             </div>
 
             <div>
               <span>ROLE</span>
-              <strong>Campaign Creative</strong>
+              <strong>{content.role}</strong>
             </div>
 
             <div>
               <span>SPECIALTY</span>
-              <strong>Words + Worlds</strong>
+              <strong>{content.specialty}</strong>
             </div>
           </div>
         </motion.div>
@@ -81,34 +128,19 @@ export default function Credits() {
         >
           <p className="credits-eyebrow">
             <Sparkles />
-            ABOUT THE PLAYER
+            {content.eyebrow}
           </p>
 
-          <h2>
-            I build campaign ideas that give brands a clearer voice
-            and a world people can remember.
-          </h2>
+          <h2>{content.headline}</h2>
 
-          <p>
-            My work sits between strategy, writing, creative direction,
-            storytelling, and culture. I enjoy taking an early idea and
-            building the language, concept, and structure that gives it
-            momentum.
-          </p>
+          <p>{content.paragraph1}</p>
 
-          <p>
-            This portfolio was designed as an interactive game because
-            I believe creative work should feel like an experience, not
-            just a collection of slides.
-          </p>
+          <p>{content.paragraph2}</p>
 
           <div className="credits-skills">
-            <span>Campaign Strategy</span>
-            <span>Copywriting</span>
-            <span>Brand Voice</span>
-            <span>Creative Direction</span>
-            <span>Storytelling</span>
-            <span>Concept Development</span>
+            {(content.skills ?? []).map((skill) => (
+              <span key={skill}>{skill}</span>
+            ))}
           </div>
 
           <button

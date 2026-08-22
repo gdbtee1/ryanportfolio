@@ -24,6 +24,8 @@ import ProjectsPage from "./admin/pages/ProjectsPage";
 import MediaPage from "./admin/pages/MediaPage";
 import DocumentsPage from "./admin/pages/DocumentsPage";
 import SettingsPage from "./admin/pages/SettingsPage";
+import HomePageEditor from "./admin/pages/HomePageEditor";
+import AboutPageEditor from "./admin/pages/AboutPageEditor";
 import ProtectedAdminRoute from "./admin/components/ProtectedAdminRoute";
 import AdminLayout from "./admin/layout/AdminLayout";
 
@@ -45,6 +47,25 @@ function AnimatedRoutes() {
               <AdminLayout>
                 <AdminDashboard />
               </AdminLayout>
+            </ProtectedAdminRoute>
+          }
+        />
+
+
+        <Route
+          path="/admin/home"
+          element={
+            <ProtectedAdminRoute>
+              <HomePageEditor />
+            </ProtectedAdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/about"
+          element={
+            <ProtectedAdminRoute>
+              <AboutPageEditor />
             </ProtectedAdminRoute>
           }
         />

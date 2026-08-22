@@ -83,25 +83,31 @@ export default function GameRoom() {
           </div>
 
           <div className="cartridge-grid">
-            {worlds.map((world, index) => (
-              <div
-                className={
-                  world.isAdmin
-                    ? "admin-terminal-cartridge"
-                    : ""
-                }
-                key={world.title}
-              >
+            {worlds.map((world, index) => {
+              const cartridge = (
                 <GameCartridge
+                  key={world.title}
                   title={world.title}
                   subtitle={world.subtitle}
                   icon={world.icon}
                   index={index}
                   onClick={() => openWorld(world)}
                 />
+              );
 
-              </div>
-            ))}
+              if (!world.isAdmin) {
+                return cartridge;
+              }
+
+              return (
+                <div
+                  className="admin-terminal-cartridge"
+                  key={world.title}
+                >
+                  {cartridge}
+                </div>
+              );
+            })}
           </div>
 
           <div className="game-room-instructions">

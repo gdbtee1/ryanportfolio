@@ -1,5 +1,4 @@
 
-
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap");
 
 :root {
@@ -754,12 +753,12 @@ textarea:focus-visible {
 
 .game-room-content {
   display: grid;
-  grid-template-columns: minmax(380px, 0.9fr) minmax(500px, 1.1fr);
-  align-items: center;
-  gap: clamp(40px, 6vw, 100px);
-  width: min(1400px, 100%);
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 42px;
+  width: min(1120px, 100%);
   margin: auto;
-  padding: 60px 0;
+  padding: 42px 0 60px;
 }
 
 .tv-column {
@@ -1039,6 +1038,7 @@ textarea:focus-visible {
 /* Cartridges */
 
 .world-selection {
+  width: 100%;
   padding: 25px;
   border: 3px solid rgba(255, 192, 158, 0.5);
   background: rgba(20, 10, 27, 0.72);
@@ -8081,38 +8081,119 @@ flex:1;
     animation: none !important;
   }
 }
-/* ==========================
-   GAME ROOM GRID OVERRIDE
-   ========================== */
 
-.cartridge-grid {
-  grid-template-columns: repeat(2, minmax(260px, 1fr));
-  gap: 32px;
-  align-items: start;
-}
-
-.cartridge-grid > div {
-  width: 100%;
-}
-
-.game-cartridge {
-  width: 100%;
-}
-
+/* Admin Terminal: preserve the original Game Room 3-column layout. */
 .admin-terminal-cartridge {
-  width: 100%;
+  min-width: 0;
 }
 
 .admin-terminal-cartridge .game-cartridge {
+  width: 100%;
   min-height: 275px;
 }
 
-.admin-terminal-status {
+@media (max-width: 760px) {
+  .admin-terminal-cartridge .game-cartridge {
+    min-height: 215px;
+  }
+}
+
+/* =========================================================
+   GAME ROOM DESKTOP LAYOUT — TV ABOVE, WORLDS BELOW
+   Scoped to desktop only so existing tablet/mobile rules stay untouched.
+   ========================================================= */
+@media (min-width: 1101px) {
+  .game-room-content {
+    grid-template-columns: 1fr;
+    align-items: start;
+    justify-items: center;
+    gap: 48px;
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    padding: 48px 0 60px;
+  }
+
+  .tv-column {
+    width: 100%;
+    justify-items: center;
+  }
+
+  .retro-tv {
+    width: min(100%, 610px);
+  }
+
+  .world-selection {
+    width: 100%;
+  }
+
+  .cartridge-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+}
+
+/* =========================================================
+   FINAL GAME ROOM LAYOUT FIX
+   TV centered above the world cartridges.
+   Scoped only to Game Room selectors.
+   ========================================================= */
+.game-room-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 52px;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 52px 0 64px;
+}
+
+.game-room-content .tv-column {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+}
+
+.game-room-content .retro-tv {
+  width: min(610px, 100%);
+}
+
+.game-room-content .world-selection {
   width: 100%;
 }
 
+.game-room-content .cartridge-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.game-room-content .cartridge-grid > * {
+  min-width: 0;
+}
+
 @media (max-width: 760px) {
-  .cartridge-grid {
+  .game-room-content {
+    gap: 45px;
+    padding: 45px 0;
+  }
+
+  .game-room-content .cartridge-grid {
     grid-template-columns: 1fr;
   }
+}
+/* CMS dashboard symmetry fix */
+.cms-dashboard .cms-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.cms-dashboard .cms-section > p:not(.hero-eyebrow) {
+  flex: 1;
+}
+
+.cms-dashboard .cms-section .cms-btn {
+  width: 100%;
+  max-width: 285px;
+  justify-content: center;
+  align-self: center;
+  text-align: center;
 }

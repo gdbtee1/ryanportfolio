@@ -4,6 +4,8 @@ import {
   FileText,
   FolderKanban,
   Image,
+  Home,
+  UserRound,
   LogOut,
   Settings,
 } from "lucide-react";
@@ -53,11 +55,35 @@ function AdminDashboard() {
 
       <div className="cms-grid">
         <Link
-          to="/admin/projects"
+          to="/admin/home"
           className="cms-section"
           style={{ textDecoration: "none", color: "inherit" }}
         >
           <p className="hero-eyebrow">01</p>
+          <Home size={30} />
+          <h2>Home Page</h2>
+          <p>Edit the public homepage headline, description, stats, and labels.</p>
+          <span className="cms-btn cms-btn-primary">Edit Home Page</span>
+        </Link>
+
+        <Link
+          to="/admin/about"
+          className="cms-section"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <p className="hero-eyebrow">02</p>
+          <UserRound size={30} />
+          <h2>About Page</h2>
+          <p>Edit the Credits/About biography, role, specialty, and skills.</p>
+          <span className="cms-btn cms-btn-primary">Edit About Page</span>
+        </Link>
+
+        <Link
+          to="/admin/projects"
+          className="cms-section"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <p className="hero-eyebrow">03</p>
           <FolderKanban size={30} />
           <h2>Projects</h2>
           <p>
@@ -73,7 +99,7 @@ function AdminDashboard() {
           className="cms-section"
           style={{ textDecoration: "none", color: "inherit" }}
         >
-          <p className="hero-eyebrow">02</p>
+          <p className="hero-eyebrow">04</p>
           <Image size={30} />
           <h2>Media Library</h2>
           <p>
@@ -89,7 +115,7 @@ function AdminDashboard() {
           className="cms-section"
           style={{ textDecoration: "none", color: "inherit" }}
         >
-          <p className="hero-eyebrow">03</p>
+          <p className="hero-eyebrow">05</p>
           <FileText size={30} />
           <h2>Documents</h2>
           <p>
@@ -105,7 +131,7 @@ function AdminDashboard() {
           className="cms-section"
           style={{ textDecoration: "none", color: "inherit" }}
         >
-          <p className="hero-eyebrow">04</p>
+          <p className="hero-eyebrow">06</p>
           <Settings size={30} />
           <h2>Settings</h2>
           <p>

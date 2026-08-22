@@ -6,6 +6,7 @@ import {
   RefreshCw,
   Save,
   Settings,
+  LockKeyhole,
 } from "lucide-react";
 
 import AdminLayout from "../layout/AdminLayout";
@@ -54,6 +55,13 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [passwordForm, setPasswordForm] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const hasUnsavedChanges = useMemo(
     () => JSON.stringify(form) !== JSON.stringify(savedForm),
@@ -101,6 +109,39 @@ export default function SettingsPage() {
 
     setMessage("");
     setErrorMessage("");
+  }
+
+  async function changePassword(event) {
+    event.preventDefault();
+    setPasswordMessage("");
+    setPasswordError("");
+
+    if (passwordForm.newPassword.length < 8) {
+      setPasswordError("Use a password with at least 8 characters.");
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError("The new passwords do not match.");
+      return;
+    }
+
+    setPasswordSaving(true);
+
+    const { error } = await supabase.auth.updateUser({
+      password: passwordForm.newPassword,
+    });
+
+    if (error) {
+      console.error("Unable to change password:", error);
+      setPasswordError(error.message || "Unable to change password.");
+      setPasswordSaving(false);
+      return;
+    }
+
+    setPasswordForm({ newPassword: "", confirmPassword: "" });
+    setPasswordMessage("Password changed successfully.");
+    setPasswordSaving(false);
   }
 
   async function saveSettings() {
@@ -552,6 +593,76 @@ export default function SettingsPage() {
                   </span>
                 </label>
               </div>
+            </section>
+
+
+            <section className="cms-settings-card">
+              <div className="cms-settings-card-heading">
+                <LockKeyhole size={22} />
+
+                <div>
+                  <h3>Account Password</h3>
+                  <p>Change the password used to sign in to this CMS.</p>
+                </div>
+              </div>
+
+              {passwordError && (
+                <div className="cms-alert cms-alert-error" role="alert">
+                  {passwordError}
+                </div>
+              )}
+
+              {passwordMessage && (
+                <div className="cms-alert cms-alert-success" role="status">
+                  <Check size={18} />
+                  {passwordMessage}
+                </div>
+              )}
+
+              <form onSubmit={changePassword}>
+                <div className="cms-grid">
+                  <div className="cms-field">
+                    <label htmlFor="new-cms-password">New password</label>
+                    <input
+                      id="new-cms-password"
+                      type="password"
+                      autoComplete="new-password"
+                      value={passwordForm.newPassword}
+                      onChange={(event) => {
+                        setPasswordForm((current) => ({ ...current, newPassword: event.target.value }));
+                        setPasswordError("");
+                        setPasswordMessage("");
+                      }}
+                      placeholder="At least 8 characters"
+                    />
+                  </div>
+
+                  <div className="cms-field">
+                    <label htmlFor="confirm-cms-password">Confirm new password</label>
+                    <input
+                      id="confirm-cms-password"
+                      type="password"
+                      autoComplete="new-password"
+                      value={passwordForm.confirmPassword}
+                      onChange={(event) => {
+                        setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }));
+                        setPasswordError("");
+                        setPasswordMessage("");
+                      }}
+                      placeholder="Re-enter new password"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="cms-btn cms-btn-primary"
+                  disabled={passwordSaving || !passwordForm.newPassword || !passwordForm.confirmPassword}
+                >
+                  {passwordSaving ? <LoaderCircle size={18} className="cms-spin" /> : <LockKeyhole size={18} />}
+                  {passwordSaving ? "Changing..." : "Change Password"}
+                </button>
+              </form>
             </section>
 
             <footer className="cms-settings-savebar">
